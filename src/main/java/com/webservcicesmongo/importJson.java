@@ -129,4 +129,15 @@ public final class importJson {
         return retorno;
     }
     
+    public static telefono importJsonTelefono(BasicDBObject Json)
+    {
+        telefono retorno = new telefono();
+        retorno.entrada = Json.getString("entrada");
+        retorno.id = Json.getString("_id");
+        retorno.telefono = Json.getString("telefono");
+        retorno.tipo = Json.getString("tipo");
+
+        return retorno;
+    }
+    
 }
