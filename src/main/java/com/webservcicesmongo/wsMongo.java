@@ -13,12 +13,9 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
-import com.mongodb.client.MongoDatabase;
-import static com.webservcicesmongo.exportJson.exportJson;
 import java.util.ArrayList;
-import java.util.Set;
+import java.util.List;
 import javax.jws.WebService;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
@@ -1698,4 +1695,288 @@ public class wsMongo {
         return retorno;
         
     }
+    
+    @WebMethod(operationName = "entradaCRUD")
+    public respuestaEntrada entradaCRUD(@WebParam(name = "Servidor") servidor servidor, @WebParam(name = "Accion") String accion, @WebParam(name = "Entrada") entrada entrada)
+    {
+        respuestaEntrada retorno = new respuestaEntrada();
+        
+        try
+        {
+            MongoClient mongo = new MongoClient(servidor.servidor , Integer.parseInt(servidor.puerto));
+            DB db = mongo.getDB(servidor.basedatos);
+            
+            DBCollection table = db.getCollection("entrada");
+            BasicDBObject searchQuery = new BasicDBObject();
+
+            boolean qry = false;
+            entrada item = null;
+
+            switch(accion)
+            {
+                case "C":
+                            retorno.estado = entrada.validaEntrada();
+                            if(retorno.estado.tipo.equals("OK"))
+                            {
+                                int count1 = 0, count2 = 0;
+                                count1 = (int) table.getCount();
+ 
+                                List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
+                                obj.add(new BasicDBObject("identificador", entrada.identificador));
+                                obj.add(new BasicDBObject("nombre", entrada.nombre));
+                                searchQuery.put("$or", obj); 
+                                searchQuery.put("usuario",entrada.usuario);
+
+                                DBCursor cursor = table.find(searchQuery);
+                                
+                                if (cursor.count()==0)
+                                {
+                                    cursor.close();
+                                    table.insert(exportJson.exportJson(entrada));
+                                    count2 = (int) table.getCount();
+                                    if(count2 > count1)
+                                    {
+                                        retorno.estado.codigo = "0000";
+                                        retorno.estado.descripcion = "Creacion satisfactoria" ;
+                                        retorno.estado.detalle = exportJson.exportJson(entrada).toJson();
+                                        retorno.item = new ArrayList<entrada>();
+                                        retorno.item.add(entrada);
+                                        retorno.estado.tipo = "OK";
+                                    }
+                                    else
+                                    {
+                                        retorno.estado.codigo = "0001";
+                                        retorno.estado.descripcion = "Error al insertar, favor verifique";
+                                        retorno.estado.tipo = "ER";
+                                    }
+
+                                }
+                                else
+                                {
+                                    retorno.estado.codigo = "0002";
+                                    retorno.estado.descripcion = "Registro previamente insertado, verifique";
+                                    retorno.estado.tipo = "ER";
+                                }
+                            }
+                            else
+                            {
+                                // El metodo de la verificacion de la clase ya asigna el mensaje segun criterio de validacion
+                            }
+                            break;
+                case "R":
+
+                            String filtro = "";
+                            if(!entrada.id.isEmpty() && !entrada.id.equals("?"))
+                            {
+                                searchQuery.put("_id",new ObjectId(entrada.id));
+                                filtro = "id";
+                                qry = true;
+                            }
+                            else
+                            {
+                                if(!entrada.nombre.isEmpty() && !entrada.nombre.equals("?"))
+                                {   
+                                    searchQuery.put("nombre",entrada.nombre);
+                                    filtro = "nombre";
+                                    qry = true;
+                                }
+                                else
+                                {
+                                    if(!entrada.tipoPersona.isEmpty() && !entrada.tipoPersona.equals("?"))
+                                    {   
+                                        searchQuery.put("tipoPersona",entrada.tipoPersona);
+                                        filtro = "tipopersona";
+                                        qry = true;
+                                    }
+                                    else
+                                    {
+                                        if(!entrada.tipoContacto.isEmpty() && !entrada.tipoContacto.equals("?"))
+                                        {   
+                                            searchQuery.put("tipoContacto",entrada.tipoContacto);
+                                            filtro = "tipocontacto";
+                                            qry = true;
+                                        }
+                                        else
+                                        {
+                                            qry = true;
+                                        }  
+                                    }
+                                }
+                            }
+                            if(qry)
+                            {
+                                DBCursor cursor = null;
+                                searchQuery.put("usuario",entrada.usuario);
+                                cursor = table.find(searchQuery);
+
+                                if (cursor.count() > 0)
+                                {   
+                                    retorno.estado.codigo = "0000";
+                                    retorno.estado.descripcion = "Consulta satisfactoria: " + filtro;
+                                    retorno.estado.detalle = Integer.toString(cursor.count());
+                                    retorno.estado.tipo = "OK";
+                                    
+                                    retorno.item = new ArrayList<entrada>();
+                                    
+                                    while (cursor.hasNext()) 
+                                    {
+                                        retorno.item.add(importJson.importJsonEntrada((BasicDBObject) cursor.next()));
+                                    }
+                                }
+                                else
+                                {
+                                    retorno.estado.codigo = "0005";
+                                    retorno.estado.descripcion = "No se encontraron documentos con el filtro solicitado {\"" + filtro + "\"}, verifique";
+                                    retorno.estado.detalle = exportJson.exportJson(entrada).toJson();
+                                    retorno.estado.tipo = "ER";
+                                }
+                                cursor.close();
+                            }
+                            else
+                            {
+                                retorno.estado.codigo = "0004";
+                                retorno.estado.descripcion = "Atributo {tipo} no valido, verifique";
+                                retorno.estado.tipo = "ER";
+                            }
+                            
+                            break;
+                case "U":
+                            /*
+                            item = null;
+                            if(!tipoContacto.id.isEmpty())
+                            {
+                                searchQuery.put("_id",new ObjectId(tipoContacto.id));
+                                filtro = "id";
+                                
+                                DBCursor cursor = table.find(searchQuery);
+
+                                if (cursor.count() ==  1)
+                                {
+                                    qry = true;
+                                    while (cursor.hasNext()) 
+                                    {
+                                        item = importJson.importJsonTipoContacto((BasicDBObject) cursor.next());
+                                    } 
+                                }
+                                cursor.close();
+                            }
+                            if (qry)
+                            {
+                                BasicDBObject updateObj = new BasicDBObject();
+                                updateObj.put("$set", exportJson.exportJsonUdp(tipoContacto));
+                                
+                                System.out.println(searchQuery.toJson() + " - " + updateObj.toJson());
+                                
+                                table.update(searchQuery, updateObj);
+                                
+                                retorno.estado.codigo = "0000";
+                                retorno.estado.descripcion = "Actualizacion satisfactoria, Id: " + tipoContacto.id ;
+                                retorno.estado.detalle = searchQuery.toJson() + " - " + updateObj.toJson();
+                                retorno.estado.tipo = "OK";
+                                
+                                retorno.item = new ArrayList<tipoContacto>();
+                                retorno.item.add(item);
+                                retorno.item.add(tipoContacto);
+                                
+                            }
+                            else
+                            {
+                                retorno.estado.codigo = "0006";
+                                retorno.estado.descripcion = "Atributo {\"_id\":\"" + tipoContacto.id + "\"} no encontrado, verifique";
+                                retorno.estado.tipo = "ER";
+                            }
+                            */
+                            break;
+                case "D":
+                            /*
+                            item = null;
+                            if(!tipoContacto.id.isEmpty())
+                            {
+                                searchQuery.put("_id",new ObjectId(tipoContacto.id));
+                                filtro = "id";
+                                
+                                DBCursor cursor = table.find(searchQuery);
+                                
+                                if (cursor.count() == 1)
+                                {
+                                    qry = true;
+                                    while (cursor.hasNext()) 
+                                    {
+                                        item = importJson.importJsonTipoContacto((BasicDBObject) cursor.next());
+                                    } 
+                                }
+                                cursor.close();
+                            }
+                            if (qry && item != null)
+                            {   
+                                table.remove(searchQuery);
+                                
+                                retorno.estado.codigo = "0000";
+                                retorno.estado.descripcion = "Eliminacion satisfactoria, Id: " + tipoContacto.id ;
+                                retorno.estado.tipo = "OK";
+                                
+                                retorno.item = new ArrayList<tipoContacto>();
+                                retorno.item.add(item);
+                                
+                            }
+                            else
+                            {
+                                retorno.estado.codigo = "0007";
+                                retorno.estado.descripcion = "Atributo {\"_id\":\"" + tipoContacto.id + "\"} no encontrado, verifique";
+                                retorno.estado.tipo = "ER";
+                            }
+                            */
+                            break;
+                default:
+                            retorno.estado.codigo = "DF01";
+                            retorno.estado.descripcion = "Opcion no valida";
+                            retorno.estado.tipo = "ER";
+                            break;
+            }
+            mongo.close();
+        }
+        catch(Exception ex)
+        {
+
+        }
+        return retorno;
+        
+    }
 }
+
+
+/*
+private static void in_Example(DBCollection collection)
+{
+    BasicDBObject inQuery = new BasicDBObject();
+ 
+    List<Integer> list = new ArrayList<Integer>();
+    list.add(2);
+    list.add(4);
+    list.add(5);
+ 
+    inQuery.put("employeeId", new BasicDBObject("$in", list));
+ 
+    DBCursor cursor = collection.find(inQuery);
+    while(cursor.hasNext()) {
+        System.out.println(cursor.next());
+}
+
+private static void andLogicalComparison_Example(DBCollection collection)
+{
+    BasicDBObject andQuery = new BasicDBObject();
+    List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
+    obj.add(new BasicDBObject("employeeId", 2));
+    obj.add(new BasicDBObject("employeeName", "TestEmployee_2"));
+    andQuery.put("$and", obj);
+  
+    System.out.println(andQuery.toString());
+  
+    DBCursor cursor = collection.find(andQuery);
+    while (cursor.hasNext()) {
+        System.out.println(cursor.next());
+    }
+}
+
+
+*/
