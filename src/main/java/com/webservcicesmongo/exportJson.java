@@ -249,4 +249,29 @@ public final class exportJson {
         return convierte;
     }
     
+    public static BasicDBObject exportJson(fecha Object)
+    {
+        BasicDBObject convierte = new BasicDBObject();
+        convierte.append("_id",Object.id);
+        convierte.append("entrada",Object.entrada);
+        convierte.append("fecha", Object.fecha);
+        convierte.append("descripcion", Object.descripcion);
+        convierte.append("categoria", Object.categoria);
+        convierte.append("tipo", Object.tipo);
+        
+        return convierte;
+    }
+    
+    public static BasicDBObject exportJsonUpd(fecha Object)
+    {
+        BasicDBObject convierte = new BasicDBObject();
+        convierte.append("entrada",Object.entrada);
+        convierte.append("fecha", Object.fecha);
+        convierte.append("descripcion", Object.descripcion);
+        convierte.append("categoria", Object.categoria);
+        convierte.append("tipo", Object.tipo);
+        
+        return convierte;
+    }
+    
 }

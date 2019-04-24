@@ -140,4 +140,17 @@ public final class importJson {
         return retorno;
     }
     
+    public static fecha importJsonFecha(BasicDBObject Json)
+    {
+        fecha retorno = new fecha();
+        retorno.id = Json.getString("_id");
+        retorno.entrada = Json.getString("entrada");
+        retorno.fecha = Json.getString("fecha");
+        retorno.descripcion = Json.getString("descripcion");
+        retorno.categoria = Json.getString("categoria");
+        retorno.tipo = Json.getString("tipo");
+
+        return retorno;
+    }
+    
 }

@@ -13,14 +13,16 @@ import com.mongodb.BasicDBObject;
  */
 public class fecha {
  
-    private String entrada;
-    private String fecha;
-    private String descripcion;
-    private String categoria;
-    private String tipo;
+    public String id;
+    public String entrada;
+    public String fecha;
+    public String descripcion;
+    public String categoria;
+    public String tipo;
     
     public fecha()
     {
+        this.id = "";
         this.entrada = "";
         this.fecha = "";
         this.descripcion = "";
@@ -36,57 +38,5 @@ public class fecha {
         this.categoria = Json.getString("categoria");
         this.tipo = Json.getString("tipo");
     }
-
-    public String getEntrada() {
-        return entrada;
-    }
-
-    public void setEntrada(String entrada) {
-        this.entrada = entrada;
-    }
     
-    public String getFecha() {
-        return fecha;
-    }
-
-    public void setFecha(String fecha) {
-        this.fecha = fecha;
-    }
-
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
-
-    public String getCategoria() {
-        return categoria;
-    }
-
-    public void setCategoria(String categoria) {
-        this.categoria = categoria;
-    }
-
-    public String getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
-    }
-    
-    public BasicDBObject toJson()
-    {
-        BasicDBObject convierte = new BasicDBObject();
-        
-        convierte.append("entrada",this.getEntrada());
-        convierte.append("fecha", this.getFecha());
-        convierte.append("descripcion", this.getDescripcion());
-        convierte.append("categoria", this.getCategoria());
-        convierte.append("tipo", this.getTipo());
-        
-        return convierte;
-    }
 }
