@@ -118,4 +118,15 @@ public final class importJson {
         return retorno;
     }
     
+    public static direccion importJsonDireccion(BasicDBObject Json)
+    {
+        direccion retorno = new direccion();
+        retorno.entrada = Json.getString("entrada");
+        retorno.id = Json.getString("_id");
+        retorno.direccion = Json.getString("direccion");
+        retorno.tipo = Json.getString("tipo");
+
+        return retorno;
+    }
+    
 }

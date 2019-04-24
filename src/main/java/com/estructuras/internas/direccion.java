@@ -13,56 +13,17 @@ import com.mongodb.BasicDBObject;
  */
 public class direccion {
     
-    private String entrada;
-    private String direccion;
-    private String tipo;
+   
+    public String entrada;
+    public String id;
+    public String direccion;
+    public String tipo;
     
     public direccion()
     {
         this.entrada = "";
+        this.id = "";
         this.direccion = "";
         this.tipo = "";
-    }
-        
-    public direccion(BasicDBObject Json)
-    {
-        this.entrada = Json.getString("entrada");
-        this.direccion = Json.getString("direccion");
-        this.tipo = Json.getString("tipo");
-    }
-
-    public String getEntrada() {
-        return entrada;
-    }
-
-    public void setEntrada(String entrada) {
-        this.entrada = entrada;
-    }
-
-    public String getDireccion() {
-        return direccion;
-    }
-
-    public void setDireccion(String direccion) {
-        this.direccion = direccion;
-    }
-
-    public String getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
-    } 
-    
-    public BasicDBObject toJson()
-    {
-        BasicDBObject convierte = new BasicDBObject();
-        
-        convierte.append("entrada",this.getEntrada());
-        convierte.append("direccion", this.getDireccion());
-        convierte.append("tipo", this.getTipo());
-        
-        return convierte;
     }
 }

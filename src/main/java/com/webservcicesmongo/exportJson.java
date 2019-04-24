@@ -207,4 +207,25 @@ public final class exportJson {
         return convierte;
     }
     
+    public static BasicDBObject exportJson(direccion Object)
+    {
+        BasicDBObject convierte = new BasicDBObject();
+        convierte.append("_id",Object.id);
+        convierte.append("entrada",Object.entrada);
+        convierte.append("direccion", Object.direccion);
+        convierte.append("tipo", Object.tipo);
+        
+        return convierte;
+    }
+    
+    public static BasicDBObject exportJsonUpd(direccion Object)
+    {
+        BasicDBObject convierte = new BasicDBObject();
+        convierte.append("entrada",Object.entrada);
+        convierte.append("direccion", Object.direccion);
+        convierte.append("tipo", Object.tipo);
+        
+        return convierte;
+    }
+    
 }
