@@ -5,8 +5,6 @@
  */
 package com.estructuras.internas;
 
-import com.mongodb.BasicDBObject;
-
 /**
  *
  * @author oscar89p
@@ -20,7 +18,7 @@ public class entrada {
     public String tipoContacto;
     public String fotografia;
     public String favorito;
-    public String usuarioId;
+    public String usuario;
 
     public entrada() {
         
@@ -31,7 +29,7 @@ public class entrada {
         this.tipoContacto = "";
         this.fotografia = "";
         this.favorito = "";
-        this.usuarioId = "";
+        this.usuario = "";
     }
     
 }

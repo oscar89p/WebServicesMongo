@@ -167,7 +167,43 @@ public final class exportJson {
         convierte.append("tipoContacto",Object.tipoContacto);
         convierte.append("fotografia",Object.fotografia);
         convierte.append("favorito",Object.favorito);
-        convierte.append("usuarioId",Object.usuarioId);
+        convierte.append("usuario",Object.usuario);
+        
+        return convierte;
+    }
+    
+    public static BasicDBObject exportJsonUpd(entrada Object)
+    {
+        BasicDBObject convierte = new BasicDBObject();
+        convierte.append("identificador",Object.identificador);
+        convierte.append("nombre", Object.nombre);
+        convierte.append("tipoPersona",Object.tipoPersona);
+        convierte.append("tipoContacto",Object.tipoContacto);
+        convierte.append("fotografia",Object.fotografia);
+        convierte.append("favorito",Object.favorito);
+        convierte.append("usuario",Object.usuario);
+        
+        return convierte;
+    }
+    
+    public static BasicDBObject exportJson(usuario Object)
+    {
+        BasicDBObject convierte = new BasicDBObject();
+        convierte.append("_id",Object.id);
+        convierte.append("usuario",Object.usuario);
+        convierte.append("nombre", Object.nombre);
+        convierte.append("password", Object.password);
+        
+        return convierte;
+    }
+    
+    public static BasicDBObject exportJsonUpd(usuario Object)
+    {
+        BasicDBObject convierte = new BasicDBObject();
+        convierte.append("usuario",Object.usuario);
+        convierte.append("nombre", Object.nombre);
+        convierte.append("password", Object.password);
+        
         return convierte;
     }
     

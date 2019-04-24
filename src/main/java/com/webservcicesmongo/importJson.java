@@ -26,6 +26,7 @@ public final class importJson {
         retorno.id = Json.getString("_id");
         retorno.tipo = Json.getString("tipo");
         retorno.descripcion = Json.getString("descripcion");
+        
         return retorno;
     }
     
@@ -35,6 +36,7 @@ public final class importJson {
         retorno.id = Json.getString("_id");
         retorno.tipo = Json.getString("tipo");
         retorno.descripcion = Json.getString("descripcion");
+        
         return retorno;
     }
     
@@ -44,6 +46,7 @@ public final class importJson {
         retorno.id = Json.getString("_id");
         retorno.tipo = Json.getString("tipo");
         retorno.descripcion = Json.getString("descripcion");
+        
         return retorno;
     }
     
@@ -53,6 +56,7 @@ public final class importJson {
         retorno.id = Json.getString("_id");
         retorno.tipo = Json.getString("tipo");
         retorno.descripcion = Json.getString("descripcion");
+        
         return retorno;
     }
     
@@ -62,6 +66,7 @@ public final class importJson {
         retorno.id = Json.getString("_id");
         retorno.tipo = Json.getString("tipo");
         retorno.descripcion = Json.getString("descripcion");
+        
         return retorno;
     }
     
@@ -72,6 +77,7 @@ public final class importJson {
         retorno.tipo = Json.getString("tipo");
         retorno.descripcion = Json.getString("descripcion");
         retorno.categoria = Json.getString("categoria");
+        
         return retorno;
     }
     
@@ -82,6 +88,7 @@ public final class importJson {
         retorno.tipo = Json.getString("tipo");
         retorno.descripcion = Json.getString("descripcion");
         retorno.categoria = Json.getString("categoria");
+        
         return retorno;
     }
     
@@ -90,12 +97,24 @@ public final class importJson {
         entrada retorno = new entrada();
         retorno.id = Json.getString("_id");
         retorno.identificador = Json.getString("identificador");
-        retorno.nombre = Json.getString("identificador");;
-        retorno.tipoPersona = Json.getString("identificador");;
-        retorno.tipoContacto = Json.getString("identificador");;
-        retorno.fotografia = Json.getString("identificador");;
-        retorno.favorito = Json.getString("identificador");;
-        retorno.usuarioId = Json.getString("usuarioId");;
+        retorno.nombre = Json.getString("nombre");
+        retorno.tipoPersona = Json.getString("tipoPersona");
+        retorno.tipoContacto = Json.getString("tipoContacto");
+        retorno.fotografia = Json.getString("fotografia");
+        retorno.favorito = Json.getString("favorito");
+        retorno.usuario = Json.getString("usuario");
+        
+        return retorno;
+    }
+    
+    public static usuario importJsonUsuario(BasicDBObject Json)
+    {
+        usuario retorno = new usuario();
+        retorno.id = Json.getString("_id");
+        retorno.nombre = Json.getString("nombre");
+        retorno.password = Json.getString("password");
+        retorno.usuario = Json.getString("usuario");
+        
         return retorno;
     }
     
