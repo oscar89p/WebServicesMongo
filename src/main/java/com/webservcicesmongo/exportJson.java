@@ -5,6 +5,7 @@
  */
 package com.webservcicesmongo;
 
+import com.estructuras.internas.*;
 import com.estructuras.tipo.*;
 import com.mongodb.BasicDBObject;
 
@@ -153,6 +154,20 @@ public final class exportJson {
         convierte.append("descripcion", Object.descripcion);
         convierte.append("categoria", Object.categoria);
         
+        return convierte;
+    }
+    
+    public static BasicDBObject exportJson(entrada Object)
+    {
+        BasicDBObject convierte = new BasicDBObject();
+        convierte.append("_id",Object.id);
+        convierte.append("identificador",Object.identificador);
+        convierte.append("nombre", Object.nombre);
+        convierte.append("tipoPersona",Object.tipoPersona);
+        convierte.append("tipoContacto",Object.tipoContacto);
+        convierte.append("fotografia",Object.fotografia);
+        convierte.append("favorito",Object.favorito);
+        convierte.append("usuarioId",Object.usuarioId);
         return convierte;
     }
     

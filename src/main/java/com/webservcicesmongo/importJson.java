@@ -5,6 +5,7 @@
  */
 package com.webservcicesmongo;
 
+import com.estructuras.internas.*;
 import com.estructuras.tipo.*;
 import com.mongodb.BasicDBObject;
 
@@ -84,6 +85,18 @@ public final class importJson {
         return retorno;
     }
     
-
+    public static entrada importJsonEntrada(BasicDBObject Json)
+    {
+        entrada retorno = new entrada();
+        retorno.id = Json.getString("_id");
+        retorno.identificador = Json.getString("identificador");
+        retorno.nombre = Json.getString("identificador");;
+        retorno.tipoPersona = Json.getString("identificador");;
+        retorno.tipoContacto = Json.getString("identificador");;
+        retorno.fotografia = Json.getString("identificador");;
+        retorno.favorito = Json.getString("identificador");;
+        retorno.usuarioId = Json.getString("usuarioId");;
+        return retorno;
+    }
     
 }

@@ -13,9 +13,9 @@ import com.mongodb.BasicDBObject;
  */
 public class email {
     
-    private String entrada;
-    private String email;
-    private String favorito;
+    public String entrada;
+    public String email;
+    public String favorito;
     
     public email()
     {
