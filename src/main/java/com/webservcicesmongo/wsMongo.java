@@ -80,7 +80,7 @@ public class wsMongo {
             switch(accion)
             {
                 case "C":
-                            if(!tipoPersona.tipo.isEmpty())
+                            if(!tipoPersona.tipo.isEmpty() && !tipoPersona.tipo.equals("?"))
                             {
                                 int count1 = 0, count2 = 0;
                                 count1 = (int) table.getCount();
@@ -311,7 +311,7 @@ public class wsMongo {
             switch(accion)
             {
                 case "C":
-                            if(!tipoTelefono.tipo.isEmpty())
+                            if(!tipoTelefono.tipo.isEmpty() && !tipoTelefono.tipo.equals("?"))
                             {
                                 int count1 = 0, count2 = 0;
                                 count1 = (int) table.getCount();
@@ -542,7 +542,7 @@ public class wsMongo {
             switch(accion)
             {
                 case "C":
-                            if(!tipoDireccion.tipo.isEmpty())
+                            if(!tipoDireccion.tipo.isEmpty() && !tipoDireccion.tipo.equals("?"))
                             {
                                 int count1 = 0, count2 = 0;
                                 count1 = (int) table.getCount();
@@ -773,7 +773,7 @@ public class wsMongo {
             switch(accion)
             {
                 case "C":
-                            if(!tipoCategoriaFecha.tipo.isEmpty())
+                            if(!tipoCategoriaFecha.tipo.isEmpty() && !tipoCategoriaFecha.tipo.equals("?"))
                             {
                                 int count1 = 0, count2 = 0;
                                 count1 = (int) table.getCount();
@@ -1004,7 +1004,7 @@ public class wsMongo {
             switch(accion)
             {
                 case "C":
-                            if(!tipoCategoriaContacto.tipo.isEmpty())
+                            if(!tipoCategoriaContacto.tipo.isEmpty() && !tipoCategoriaContacto.tipo.equals("?"))
                             {
                                 int count1 = 0, count2 = 0;
                                 count1 = (int) table.getCount();
@@ -1235,7 +1235,7 @@ public class wsMongo {
             switch(accion)
             {
                 case "C":
-                            if(!tipoFecha.tipo.isEmpty())
+                            if(!tipoFecha.tipo.isEmpty() && !tipoFecha.tipo.equals("?"))
                             {
                                 int count1 = 0, count2 = 0;
                                 count1 = (int) table.getCount();
@@ -1475,7 +1475,7 @@ public class wsMongo {
             switch(accion)
             {
                 case "C":
-                            if(!tipoContacto.tipo.isEmpty())
+                            if(!tipoContacto.tipo.isEmpty() && !tipoContacto.tipo.equals("?"))
                             {
                                 int count1 = 0, count2 = 0;
                                 count1 = (int) table.getCount();
@@ -1732,13 +1732,13 @@ public class wsMongo {
                                 if (cursor.count()==0)
                                 {
                                     cursor.close();
-                                    table.insert(exportJson.exportJson(entrada));
+                                    table.insert(exportJson.exportJsonUpd(entrada));
                                     count2 = (int) table.getCount();
                                     if(count2 > count1)
                                     {
                                         retorno.estado.codigo = "0000";
                                         retorno.estado.descripcion = "Creacion satisfactoria" ;
-                                        retorno.estado.detalle = exportJson.exportJson(entrada).toJson();
+                                        retorno.estado.detalle = exportJson.exportJsonUpd(entrada).toJson();
                                         retorno.item = new ArrayList<entrada>();
                                         retorno.item.add(entrada);
                                         retorno.estado.tipo = "OK";
