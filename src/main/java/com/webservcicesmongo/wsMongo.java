@@ -1707,6 +1707,7 @@ public class wsMongo {
             DB db = mongo.getDB(servidor.basedatos);
             
             DBCollection table = db.getCollection("entrada");
+            DBCollection tabletemp = null;
             BasicDBObject searchQuery = new BasicDBObject();
 
             boolean qry = false;
@@ -1729,27 +1730,62 @@ public class wsMongo {
 
                                 DBCursor cursor = table.find(searchQuery);
                                 
+                                System.out.println(cursor.count());
+                                
                                 if (cursor.count()==0)
                                 {
                                     cursor.close();
-                                    table.insert(exportJson.exportJsonUpd(entrada));
-                                    count2 = (int) table.getCount();
-                                    if(count2 > count1)
+                                    
+                                    searchQuery = new BasicDBObject();
+                                    searchQuery.put("tipo", entrada.tipoPersona);
+
+                                    tabletemp = db.getCollection("tipoPersona");
+                                    cursor = tabletemp.find(searchQuery);
+
+                                    if (cursor.count() > 0)
                                     {
-                                        retorno.estado.codigo = "0000";
-                                        retorno.estado.descripcion = "Creacion satisfactoria" ;
-                                        retorno.estado.detalle = exportJson.exportJsonUpd(entrada).toJson();
-                                        retorno.item = new ArrayList<entrada>();
-                                        retorno.item.add(entrada);
-                                        retorno.estado.tipo = "OK";
+                                        cursor.close();
+                                    
+                                        searchQuery = new BasicDBObject();
+                                        searchQuery.put("tipo", entrada.tipoContacto);
+                                    
+                                        tabletemp = db.getCollection("tipoContacto");
+                                        cursor = tabletemp.find(searchQuery);
+                                    
+                                        if (cursor.count() > 0)
+                                        {
+                                            table.insert(exportJson.exportJsonUpd(entrada));
+                                            count2 = (int) table.getCount();
+                                            if(count2 > count1)
+                                            {
+                                                retorno.estado.codigo = "0000";
+                                                retorno.estado.descripcion = "Creacion satisfactoria" ;
+                                                retorno.estado.detalle = exportJson.exportJsonUpd(entrada).toJson();
+                                                retorno.item = new ArrayList<entrada>();
+                                                retorno.item.add(entrada);
+                                                retorno.estado.tipo = "OK";
+                                            }
+                                            else
+                                            {
+                                                retorno.estado.codigo = "0001";
+                                                retorno.estado.descripcion = "Error al insertar, favor verifique";
+                                                retorno.estado.tipo = "ER";
+                                            }
+                                            cursor.close();
+                                        }
+                                        else
+                                        {
+                                            retorno.estado.codigo = "0009";
+                                            retorno.estado.descripcion = "Tipo contacto no valido, verifique";
+                                            retorno.estado.tipo = "ER";
+                                        }
                                     }
                                     else
                                     {
-                                        retorno.estado.codigo = "0001";
-                                        retorno.estado.descripcion = "Error al insertar, favor verifique";
+                                        retorno.estado.codigo = "0008";
+                                        retorno.estado.descripcion = "Tipo persona no valido, verifique";
                                         retorno.estado.tipo = "ER";
                                     }
-
                                 }
                                 else
                                 {
