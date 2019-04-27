@@ -240,7 +240,7 @@ public class wsMongo {
                             break;
                 case "D":
                             item = null;
-                            if(!tipoPersona.id.isEmpty())
+                            if(!tipoPersona.id.isEmpty() && !tipoPersona.id.equals("?"))
                             {
                                 searchQuery.put("_id",new ObjectId(tipoPersona.id));
                                 filtro = "id";
@@ -426,7 +426,7 @@ public class wsMongo {
                             break;
                 case "U":
                             item = null;
-                            if(!tipoTelefono.id.isEmpty())
+                            if(!tipoTelefono.id.isEmpty() && !tipoTelefono.id.equals("?"))
                             {
                                 searchQuery.put("_id",new ObjectId(tipoTelefono.id));
                                 filtro = "id";
@@ -657,7 +657,7 @@ public class wsMongo {
                             break;
                 case "U":
                             item = null;
-                            if(!tipoDireccion.id.isEmpty())
+                            if(!tipoDireccion.id.isEmpty() && !tipoDireccion.id.equals("?"))
                             {
                                 searchQuery.put("_id",new ObjectId(tipoDireccion.id));
                                 filtro = "id";
@@ -888,7 +888,7 @@ public class wsMongo {
                             break;
                 case "U":
                             item = null;
-                            if(!tipoCategoriaFecha.id.isEmpty())
+                            if(!tipoCategoriaFecha.id.isEmpty() && !tipoCategoriaFecha.id.equals("?"))
                             {
                                 searchQuery.put("_id",new ObjectId(tipoCategoriaFecha.id));
                                 filtro = "id";
@@ -1119,7 +1119,7 @@ public class wsMongo {
                             break;
                 case "U":
                             item = null;
-                            if(!tipoCategoriaContacto.id.isEmpty())
+                            if(!tipoCategoriaContacto.id.isEmpty() && !tipoCategoriaContacto.id.equals("?"))
                             {
                                 searchQuery.put("_id",new ObjectId(tipoCategoriaContacto.id));
                                 filtro = "id";
@@ -1359,7 +1359,7 @@ public class wsMongo {
                             break;
                 case "U":
                             item = null;
-                            if(!tipoFecha.id.isEmpty())
+                            if(!tipoFecha.id.isEmpty() && !tipoFecha.id.equals("?"))
                             {
                                 searchQuery.put("_id",new ObjectId(tipoFecha.id));
                                 filtro = "id";
@@ -1456,8 +1456,8 @@ public class wsMongo {
         
     }
     
-    @WebMethod(operationName = "tipoContacoCRUD")
-    public respuestaTipoContacto tipoContacoCRUD(@WebParam(name = "Servidor") servidor servidor, @WebParam(name = "Accion") String accion, @WebParam(name = "TipoContacto") tipoContacto tipoContacto)
+    @WebMethod(operationName = "tipoContactoCRUD")
+    public respuestaTipoContacto tipoContactoCRUD(@WebParam(name = "Servidor") servidor servidor, @WebParam(name = "Accion") String accion, @WebParam(name = "TipoContacto") tipoContacto tipoContacto)
     {
         respuestaTipoContacto retorno = new respuestaTipoContacto();
         
@@ -1599,7 +1599,7 @@ public class wsMongo {
                             break;
                 case "U":
                             item = null;
-                            if(!tipoContacto.id.isEmpty())
+                            if(!tipoContacto.id.isEmpty() && !tipoContacto.id.equals("?"))
                             {
                                 searchQuery.put("_id",new ObjectId(tipoContacto.id));
                                 filtro = "id";
@@ -1774,32 +1774,41 @@ public class wsMongo {
                             }
                             else
                             {
-                                if(!entrada.nombre.isEmpty() && !entrada.nombre.equals("?"))
-                                {   
-                                    searchQuery.put("nombre",entrada.nombre);
-                                    filtro = "nombre";
+                                if(!entrada.identificador.isEmpty() && !entrada.identificador.equals("?"))
+                                {
+                                    searchQuery.put("identificador",entrada.identificador);
+                                    filtro = "identificador";
                                     qry = true;
                                 }
                                 else
                                 {
-                                    if(!entrada.tipoPersona.isEmpty() && !entrada.tipoPersona.equals("?"))
+                                    if(!entrada.nombre.isEmpty() && !entrada.nombre.equals("?"))
                                     {   
-                                        searchQuery.put("tipoPersona",entrada.tipoPersona);
-                                        filtro = "tipopersona";
+                                        searchQuery.put("nombre",entrada.nombre);
+                                        filtro = "nombre";
                                         qry = true;
                                     }
                                     else
                                     {
-                                        if(!entrada.tipoContacto.isEmpty() && !entrada.tipoContacto.equals("?"))
+                                        if(!entrada.tipoPersona.isEmpty() && !entrada.tipoPersona.equals("?"))
                                         {   
-                                            searchQuery.put("tipoContacto",entrada.tipoContacto);
-                                            filtro = "tipocontacto";
+                                            searchQuery.put("tipoPersona",entrada.tipoPersona);
+                                            filtro = "tipopersona";
                                             qry = true;
                                         }
                                         else
                                         {
-                                            qry = true;
-                                        }  
+                                            if(!entrada.tipoContacto.isEmpty() && !entrada.tipoContacto.equals("?"))
+                                            {   
+                                                searchQuery.put("tipoContacto",entrada.tipoContacto);
+                                                filtro = "tipocontacto";
+                                                qry = true;
+                                            }
+                                            else
+                                            {
+                                                qry = true;
+                                            }  
+                                        }
                                     }
                                 }
                             }
@@ -1807,6 +1816,9 @@ public class wsMongo {
                             {
                                 DBCursor cursor = null;
                                 searchQuery.put("usuario",entrada.usuario);
+                                
+                                System.out.println(searchQuery.toJson());
+                                
                                 cursor = table.find(searchQuery);
 
                                 if (cursor.count() > 0)
@@ -1841,13 +1853,13 @@ public class wsMongo {
                             
                             break;
                 case "U":
-                            /*
+ 
                             item = null;
-                            if(!tipoContacto.id.isEmpty())
+                            if(!entrada.id.isEmpty() && !entrada.id.equals("?"))
                             {
-                                searchQuery.put("_id",new ObjectId(tipoContacto.id));
+                                searchQuery.put("_id",new ObjectId(entrada.id));
                                 filtro = "id";
-                                
+                                                                
                                 DBCursor cursor = table.find(searchQuery);
 
                                 if (cursor.count() ==  1)
@@ -1855,7 +1867,7 @@ public class wsMongo {
                                     qry = true;
                                     while (cursor.hasNext()) 
                                     {
-                                        item = importJson.importJsonTipoContacto((BasicDBObject) cursor.next());
+                                        item = importJson.importJsonEntrada((BasicDBObject) cursor.next());
                                     } 
                                 }
                                 cursor.close();
@@ -1863,36 +1875,35 @@ public class wsMongo {
                             if (qry)
                             {
                                 BasicDBObject updateObj = new BasicDBObject();
-                                updateObj.put("$set", exportJson.exportJsonUdp(tipoContacto));
+                                updateObj.put("$set", exportJson.exportJsonUpd(entrada));
                                 
                                 System.out.println(searchQuery.toJson() + " - " + updateObj.toJson());
                                 
                                 table.update(searchQuery, updateObj);
                                 
                                 retorno.estado.codigo = "0000";
-                                retorno.estado.descripcion = "Actualizacion satisfactoria, Id: " + tipoContacto.id ;
+                                retorno.estado.descripcion = "Actualizacion satisfactoria, Id: " + entrada.id ;
                                 retorno.estado.detalle = searchQuery.toJson() + " - " + updateObj.toJson();
                                 retorno.estado.tipo = "OK";
                                 
-                                retorno.item = new ArrayList<tipoContacto>();
+                                retorno.item = new ArrayList<entrada>();
                                 retorno.item.add(item);
-                                retorno.item.add(tipoContacto);
+                                retorno.item.add(entrada);
                                 
                             }
                             else
                             {
                                 retorno.estado.codigo = "0006";
-                                retorno.estado.descripcion = "Atributo {\"_id\":\"" + tipoContacto.id + "\"} no encontrado, verifique";
+                                retorno.estado.descripcion = "Atributo {\"_id\":\"" + entrada.id + "\"} no encontrado, verifique";
                                 retorno.estado.tipo = "ER";
                             }
-                            */
                             break;
                 case "D":
-                            /*
+                            
                             item = null;
-                            if(!tipoContacto.id.isEmpty())
+                            if(!entrada.id.isEmpty() && !entrada.id.equals("?"))
                             {
-                                searchQuery.put("_id",new ObjectId(tipoContacto.id));
+                                searchQuery.put("_id",new ObjectId(entrada.id));
                                 filtro = "id";
                                 
                                 DBCursor cursor = table.find(searchQuery);
@@ -1902,7 +1913,7 @@ public class wsMongo {
                                     qry = true;
                                     while (cursor.hasNext()) 
                                     {
-                                        item = importJson.importJsonTipoContacto((BasicDBObject) cursor.next());
+                                        item = importJson.importJsonEntrada((BasicDBObject) cursor.next());
                                     } 
                                 }
                                 cursor.close();
@@ -1912,20 +1923,19 @@ public class wsMongo {
                                 table.remove(searchQuery);
                                 
                                 retorno.estado.codigo = "0000";
-                                retorno.estado.descripcion = "Eliminacion satisfactoria, Id: " + tipoContacto.id ;
+                                retorno.estado.descripcion = "Eliminacion satisfactoria, Id: " + entrada.id ;
                                 retorno.estado.tipo = "OK";
                                 
-                                retorno.item = new ArrayList<tipoContacto>();
+                                retorno.item = new ArrayList<entrada>();
                                 retorno.item.add(item);
                                 
                             }
                             else
                             {
                                 retorno.estado.codigo = "0007";
-                                retorno.estado.descripcion = "Atributo {\"_id\":\"" + tipoContacto.id + "\"} no encontrado, verifique";
+                                retorno.estado.descripcion = "Atributo {\"_id\":\"" + entrada.id + "\"} no encontrado, verifique";
                                 retorno.estado.tipo = "ER";
                             }
-                            */
                             break;
                 default:
                             retorno.estado.codigo = "DF01";
