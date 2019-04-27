@@ -1741,7 +1741,9 @@ public class wsMongo {
 
                                     tabletemp = db.getCollection("tipoPersona");
                                     cursor = tabletemp.find(searchQuery);
-
+                                    
+                                    System.out.println(cursor.count());
+                                    
                                     if (cursor.count() > 0)
                                     {
                                         cursor.close();
