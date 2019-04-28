@@ -5,7 +5,7 @@
  */
 package com.estructuras.respuesta;
 
-import com.estructuras.internas.telefono;
+import com.estructuras.internas.email;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -18,21 +18,21 @@ import javax.xml.bind.annotation.XmlType;
  * @author oscar89p
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "respuestaTelefono", propOrder = {"estado","item"})
-public class respuestaTelefono {
+@XmlType(name = "respuestaEmail", propOrder = {"estado","item"})
+public class respuestaEmail {
     
     @XmlElement( name = "estado")
     public estado estado;    
     @XmlElement( name = "item")
-    public List<telefono> item = null;
+    public List<email> item = null;
     
-    public respuestaTelefono(){
+    public respuestaEmail(){
         estado = new estado();
     }
     
-    public List<telefono> getListaTelefono() {
+    public List<email> getListaEmail() {
         if(this.item == null) {
-            this.item = new ArrayList<telefono>();
+            this.item = new ArrayList<email>();
         }
         return this.item;    
     }

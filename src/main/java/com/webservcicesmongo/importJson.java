@@ -129,6 +129,17 @@ public final class importJson {
         return retorno;
     }
     
+    public static email importJsonEmail(BasicDBObject Json)
+    {
+        email retorno = new email();
+        retorno.entrada = Json.getString("entrada");
+        retorno.id = Json.getString("_id");
+        retorno.email = Json.getString("email");
+        retorno.favorito = Json.getString("favorito");
+
+        return retorno;
+    }
+    
     public static telefono importJsonTelefono(BasicDBObject Json)
     {
         telefono retorno = new telefono();

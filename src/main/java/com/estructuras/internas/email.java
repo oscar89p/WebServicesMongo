@@ -5,6 +5,7 @@
  */
 package com.estructuras.internas;
 
+import com.estructuras.respuesta.estado;
 import com.mongodb.BasicDBObject;
 
 /**
@@ -14,55 +15,41 @@ import com.mongodb.BasicDBObject;
 public class email {
     
     public String entrada;
+    public String id;
     public String email;
     public String favorito;
     
     public email()
     {
         this.entrada = "";
+        this.id = "";
         this.email = "";
         this.favorito = "";
     }
     
-    public email(BasicDBObject Json)
-    {
-        this.entrada = Json.getString("entrada");
-        this.email = Json.getString("email");
-        this.favorito = Json.getString("favorito");
-    }
-
-    public String getEntrada() {
-        return entrada;
-    }
-
-    public void setEntrada(String entrada) {
-        this.entrada = entrada;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getFavorito() {
-        return favorito;
-    }
-
-    public void setFavorito(String favorito) {
-        this.favorito = favorito;
-    }
+    public estado validaEmail()
+    {        
+        estado retorno = new estado();
+        retorno.codigo = "0000";
+        retorno.descripcion = "Verificacion satisfactoria";
+        retorno.tipo = "OK";
         
-    public BasicDBObject toJson()
-    {
-        BasicDBObject convierte = new BasicDBObject();
         
-        convierte.append("entrada",this.getEntrada());
-        convierte.append("email", this.getEmail());
-        convierte.append("favorito", this.getFavorito());
-        
-        return convierte;
+        if (this.entrada.isEmpty())
+        {
+            retorno.codigo = "V001";
+            retorno.descripcion = "Entrada no valida, verifique";
+            retorno.tipo = "ER";
+            return retorno;
+        }
+        if (this.email.isEmpty())
+        {
+            retorno.codigo = "V002";
+            retorno.descripcion = "Direccion no valido, verifique";
+            retorno.tipo = "ER";
+            return retorno;
+        }
+       
+        return retorno;
     }
 }

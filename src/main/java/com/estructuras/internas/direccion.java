@@ -5,7 +5,7 @@
  */
 package com.estructuras.internas;
 
-import com.mongodb.BasicDBObject;
+import com.estructuras.respuesta.estado;
 
 /**
  *
@@ -13,7 +13,6 @@ import com.mongodb.BasicDBObject;
  */
 public class direccion {
     
-   
     public String entrada;
     public String id;
     public String direccion;
@@ -25,5 +24,37 @@ public class direccion {
         this.id = "";
         this.direccion = "";
         this.tipo = "";
+    }
+    
+    public estado validaDireccion()
+    {        
+        estado retorno = new estado();
+        retorno.codigo = "0000";
+        retorno.descripcion = "Verificacion satisfactoria";
+        retorno.tipo = "OK";
+        
+        
+        if (this.entrada.isEmpty())
+        {
+            retorno.codigo = "V001";
+            retorno.descripcion = "Entrada no valida, verifique";
+            retorno.tipo = "ER";
+            return retorno;
+        }
+        if (this.direccion.isEmpty())
+        {
+            retorno.codigo = "V002";
+            retorno.descripcion = "Direccion no valido, verifique";
+            retorno.tipo = "ER";
+            return retorno;
+        }
+        if (this.tipo.isEmpty())
+        {
+            retorno.codigo = "V003";
+            retorno.descripcion = "Tipo de direccion no valida, verifique";
+            retorno.tipo = "ER";
+        }
+       
+        return retorno;
     }
 }

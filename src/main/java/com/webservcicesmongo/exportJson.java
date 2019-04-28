@@ -228,6 +228,28 @@ public final class exportJson {
         return convierte;
     }
     
+    public static BasicDBObject exportJson(email Object)
+    {
+        BasicDBObject convierte = new BasicDBObject();
+        convierte.append("_id",Object.id);
+        convierte.append("entrada",Object.entrada);
+        convierte.append("email", Object.email);
+        convierte.append("favorito", Object.favorito);
+        
+        return convierte;
+    }
+    
+    public static BasicDBObject exportJsonUpd(email Object)
+    {
+        BasicDBObject convierte = new BasicDBObject();
+        convierte.append("entrada",Object.entrada);
+        convierte.append("email", Object.email);
+        convierte.append("favorito", Object.favorito);
+        
+        return convierte;
+    }
+    
+    
     public static BasicDBObject exportJson(telefono Object)
     {
         BasicDBObject convierte = new BasicDBObject();

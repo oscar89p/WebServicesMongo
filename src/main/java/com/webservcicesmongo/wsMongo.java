@@ -1990,6 +1990,681 @@ public class wsMongo {
         return retorno;
         
     }
+    
+    @WebMethod(operationName = "direccionCRUD")
+    public respuestaDireccion direccionCRUD(@WebParam(name = "Servidor") servidor servidor, @WebParam(name = "Accion") String accion, @WebParam(name = "Direccion") direccion direccion)
+    {
+        respuestaDireccion retorno = new respuestaDireccion();
+        
+        try
+        {
+            MongoClient mongo = new MongoClient(servidor.servidor , Integer.parseInt(servidor.puerto));
+            DB db = mongo.getDB(servidor.basedatos);
+            
+            DBCollection table = db.getCollection("direccion");
+            DBCollection tabletemp = null;
+            BasicDBObject searchQuery = new BasicDBObject();
+
+            boolean qry = false;
+            direccion item = null;
+
+            switch(accion)
+            {
+                case "C":
+                            retorno.estado = direccion.validaDireccion();
+                            if(retorno.estado.tipo.equals("OK"))
+                            {
+                                int count1 = 0, count2 = 0;
+                                count1 = (int) table.getCount();
+                                
+                                tabletemp = db.getCollection("entrada");
+                                
+                                searchQuery.put("_id",new ObjectId(direccion.entrada));
+                                searchQuery.put("usuario", servidor.usuario);
+
+                                DBCursor cursor = tabletemp.find(searchQuery);
+                                
+                                System.out.println(direccion.entrada + "-" +cursor.count());
+                                
+                                if (cursor.count()==1)
+                                {
+                                    cursor.close();
+                                    
+                                    searchQuery = new BasicDBObject();
+                                    searchQuery.put("direccion", direccion.direccion);
+                                    searchQuery.put("entrada", direccion.entrada);
+
+                                    cursor = table.find(searchQuery);
+                                    
+                                    System.out.println(cursor.count());
+                                    
+                                    if (cursor.count() == 0)
+                                    {
+                                        table.insert(exportJson.exportJsonUpd(direccion));
+                                        count2 = (int) table.getCount();
+                                        if(count2 > count1)
+                                        {
+                                            retorno.estado.codigo = "0000";
+                                            retorno.estado.descripcion = "Creacion satisfactoria" ;
+                                            retorno.estado.detalle = exportJson.exportJsonUpd(direccion).toJson();
+                                            retorno.item = new ArrayList<direccion>();
+                                            retorno.item.add(direccion);
+                                            retorno.estado.tipo = "OK";
+                                        }
+                                        else
+                                        {
+                                            retorno.estado.codigo = "0001";
+                                            retorno.estado.descripcion = "Error al insertar, favor verifique";
+                                            retorno.estado.tipo = "ER";
+                                        }
+                                        cursor.close();
+                                    }
+                                    else
+                                    {
+                                        retorno.estado.codigo = "0008";
+                                        retorno.estado.descripcion = "Direccion previamente ingresada, verifique";
+                                        retorno.estado.tipo = "ER";
+                                    }
+                                }
+                                else
+                                {
+                                    retorno.estado.codigo = "0004";
+                                    retorno.estado.descripcion = "Entrada no pertenece a usuario o no existe, verifique";
+                                    retorno.estado.tipo = "ER";
+                                }
+                            }
+                            else
+                            {
+                                // El metodo de la verificacion de la clase ya asigna el mensaje segun criterio de validacion
+                            }
+                            break;
+                case "R":
+
+                            DBCursor cursor = null;
+                            String filtro = "";
+                            if(!direccion.entrada.isEmpty() && !direccion.entrada.equals("?"))
+                            {
+                                searchQuery.put("_id",new ObjectId(direccion.entrada));
+                                searchQuery.put("usuario",servidor.usuario);
+                                
+                                tabletemp = db.getCollection("entrada");
+
+                                cursor = tabletemp.find(searchQuery);
+                                
+                                if(cursor.count() == 1)
+                                {
+                                    cursor.close();
+                                    
+                                    searchQuery = new BasicDBObject();
+                                    searchQuery.put("entrada",direccion.entrada);
+                                    filtro = "entrada";
+                                    qry = true;
+                                    
+                                    if(!direccion.id.isEmpty() && !direccion.id.equals("?"))
+                                    {
+                                        searchQuery.put("_id",new ObjectId(direccion.id));
+                                        filtro = "id";
+                                        qry = true;
+                                    }
+                                    else
+                                    {
+                                        if(!direccion.direccion.isEmpty() && !direccion.direccion.equals("?"))
+                                        {
+                                            searchQuery.put("direccion",direccion.direccion);
+                                            filtro = "direccion";
+                                            qry = true;
+                                        }
+                                        else
+                                        {
+                                            if(!direccion.tipo.isEmpty() && !direccion.tipo.equals("?"))
+                                            {   
+                                                searchQuery.put("tipo",direccion.tipo);
+                                                filtro = "tipo";
+                                                qry = true;
+                                            }
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    retorno.estado.codigo = "0004";
+                                    retorno.estado.descripcion = "Entrada no pertenece a usuario o no existe, verifique";
+                                    retorno.estado.tipo = "ER";
+                                }
+                            }
+                            else
+                            {
+                                retorno.estado.codigo = "0004";
+                                retorno.estado.descripcion = "Entrada no valida, verifique";
+                                retorno.estado.tipo = "ER";
+                            }
+                            if(qry)
+                            {
+                                cursor = null;
+
+                                System.out.println(filtro + "-" +searchQuery.toJson());
+                                
+                                cursor = table.find(searchQuery);
+
+                                if (cursor.count() > 0)
+                                {   
+                                    retorno.estado.codigo = "0000";
+                                    retorno.estado.descripcion = "Consulta satisfactoria: " + filtro;
+                                    retorno.estado.detalle = Integer.toString(cursor.count());
+                                    retorno.estado.tipo = "OK";
+                                    
+                                    retorno.item = new ArrayList<direccion>();
+                                    
+                                    while (cursor.hasNext()) 
+                                    {
+                                        retorno.item.add(importJson.importJsonDireccion((BasicDBObject) cursor.next()));
+                                    }
+                                }
+                                else
+                                {
+                                    retorno.estado.codigo = "0005";
+                                    retorno.estado.descripcion = "No se encontraron documentos con el filtro solicitado {\"" + filtro + "\"}, verifique";
+                                    retorno.estado.detalle = exportJson.exportJson(direccion).toJson();
+                                    retorno.estado.tipo = "ER";
+                                }
+                                cursor.close();
+                            }
+                            
+                            break;
+                case "U":
+
+                            item = null;
+
+                            if(!direccion.entrada.isEmpty() && !direccion.entrada.equals("?"))
+                            {
+                               
+                                searchQuery.put("_id",new ObjectId(direccion.entrada));
+                                searchQuery.put("usuario",servidor.usuario);
+                                
+                                tabletemp = db.getCollection("entrada");
+
+                                cursor = tabletemp.find(searchQuery);
+                                
+                                if(cursor.count() == 1)
+                                {
+                                    cursor.close();
+                                
+                                    if(!direccion.id.isEmpty() && !direccion.id.equals("?"))
+                                    {
+                                        searchQuery = new BasicDBObject();
+                                        searchQuery.put("_id",new ObjectId(direccion.id));
+                                        searchQuery.put("entrada",direccion.entrada);
+
+                                        filtro = "id";
+
+                                        cursor = table.find(searchQuery);
+
+                                        if (cursor.count() ==  1)
+                                        {
+                                            qry = true;
+                                            while (cursor.hasNext()) 
+                                            {
+                                                item = importJson.importJsonDireccion((BasicDBObject) cursor.next());
+                                            } 
+                                        }
+                                        cursor.close();
+                                    }
+                                }
+                                else
+                                {
+                                    retorno.estado.codigo = "0004";
+                                    retorno.estado.descripcion = "Entrada no pertenece a usuario o no existe, verifique";
+                                    retorno.estado.tipo = "ER";
+                                }
+                            }
+                            else
+                            {
+                                retorno.estado.codigo = "0004";
+                                retorno.estado.descripcion = "Entrada no valida, verifique";
+                                retorno.estado.tipo = "ER";
+                            }
+                            if (qry && item != null)
+                            {
+                                BasicDBObject updateObj = new BasicDBObject();
+                                updateObj.put("$set", exportJson.exportJsonUpd(direccion));
+                                
+                                System.out.println(searchQuery.toJson() + " - " + updateObj.toJson());
+                                
+                                table.update(searchQuery, updateObj);
+                                
+                                retorno.estado.codigo = "0000";
+                                retorno.estado.descripcion = "Actualizacion satisfactoria, Id: " + direccion.id  + ", entrada: " + direccion.entrada;
+                                retorno.estado.detalle = searchQuery.toJson() + " - " + updateObj.toJson();
+                                retorno.estado.tipo = "OK";
+                                
+                                retorno.item = new ArrayList<direccion>();
+                                retorno.item.add(item);
+                                retorno.item.add(direccion);
+                                
+                            }
+                            else
+                            {
+                                retorno.estado.codigo = "0006";
+                                retorno.estado.descripcion = "Atributo {\"_id\":\"" + direccion.id + "\"} no encontrado, verifique";
+                                retorno.estado.tipo = "ER";
+                            }
+     
+                            break;
+                case "D":
+                            item = null;
+
+                            if(!direccion.entrada.isEmpty() && !direccion.entrada.equals("?"))
+                            {
+                               
+                                searchQuery.put("_id",new ObjectId(direccion.entrada));
+                                searchQuery.put("usuario",servidor.usuario);
+                                
+                                tabletemp = db.getCollection("entrada");
+
+                                cursor = tabletemp.find(searchQuery);
+                                
+                                if(cursor.count() == 1)
+                                {
+                                    cursor.close();
+                                
+                                    if(!direccion.id.isEmpty() && !direccion.id.equals("?"))
+                                    {
+                                        searchQuery = new BasicDBObject();
+                                        searchQuery.put("_id",new ObjectId(direccion.id));
+                                        searchQuery.put("entrada",direccion.entrada);
+
+                                        filtro = "id";
+
+                                        cursor = table.find(searchQuery);
+
+                                        if (cursor.count() ==  1)
+                                        {
+                                            qry = true;
+                                            while (cursor.hasNext()) 
+                                            {
+                                                item = importJson.importJsonDireccion((BasicDBObject) cursor.next());
+                                            } 
+                                        }
+                                        cursor.close();
+                                    }
+                                }
+                                else
+                                {
+                                    retorno.estado.codigo = "0004";
+                                    retorno.estado.descripcion = "Entrada no pertenece a usuario o no existe, verifique";
+                                    retorno.estado.tipo = "ER";
+                                }
+                            }
+                            else
+                            {
+                                retorno.estado.codigo = "0004";
+                                retorno.estado.descripcion = "Entrada no valida, verifique";
+                                retorno.estado.tipo = "ER";
+                            }
+                            if (qry && item != null)
+                            {                                
+                                table.remove(searchQuery);
+                                
+                                retorno.estado.codigo = "0000";
+                                retorno.estado.descripcion = "Eliminacion satisfactoria, Id: " + direccion.id  + ", entrada: " + direccion.entrada;
+                                retorno.estado.detalle = searchQuery.toJson();
+                                retorno.estado.tipo = "OK";
+                                
+                                retorno.item = new ArrayList<direccion>();
+                                retorno.item.add(item);
+                                retorno.item.add(direccion);
+                                
+                            }
+                            break;
+                default:
+                            retorno.estado.codigo = "DF01";
+                            retorno.estado.descripcion = "Opcion no valida";
+                            retorno.estado.tipo = "ER";
+                            break;
+            }
+            mongo.close();
+        }
+        catch(Exception ex)
+        {
+
+        }
+        return retorno;
+        
+    }
+    
+    @WebMethod(operationName = "emailCRUD")
+    public respuestaEmail emailCRUD(@WebParam(name = "Servidor") servidor servidor, @WebParam(name = "Accion") String accion, @WebParam(name = "Email") email email)
+    {
+        respuestaEmail retorno = new respuestaEmail();
+        
+        try
+        {
+            MongoClient mongo = new MongoClient(servidor.servidor , Integer.parseInt(servidor.puerto));
+            DB db = mongo.getDB(servidor.basedatos);
+            
+            DBCollection table = db.getCollection("email");
+            DBCollection tabletemp = null;
+            BasicDBObject searchQuery = new BasicDBObject();
+
+            boolean qry = false;
+            email item = null;
+
+            switch(accion)
+            {
+                case "C":
+                            retorno.estado = email.validaEmail();
+                            if(retorno.estado.tipo.equals("OK"))
+                            {
+                                int count1 = 0, count2 = 0;
+                                count1 = (int) table.getCount();
+                                
+                                tabletemp = db.getCollection("entrada");
+                                
+                                searchQuery.put("_id",new ObjectId(email.entrada));
+                                searchQuery.put("usuario", servidor.usuario);
+
+                                DBCursor cursor = tabletemp.find(searchQuery);
+                                
+                                System.out.println(email.entrada + "-" + cursor.count());
+                                
+                                if (cursor.count()==1)
+                                {
+                                    cursor.close();
+                                    
+                                    searchQuery = new BasicDBObject();
+                                    searchQuery.put("email", email.email);
+                                    searchQuery.put("entrada", email.entrada);
+
+                                    cursor = table.find(searchQuery);
+                                    
+                                    System.out.println(cursor.count());
+                                    
+                                    if (cursor.count() == 0)
+                                    {
+                                        table.insert(exportJson.exportJsonUpd(email));
+                                        count2 = (int) table.getCount();
+                                        if(count2 > count1)
+                                        {
+                                            retorno.estado.codigo = "0000";
+                                            retorno.estado.descripcion = "Creacion satisfactoria" ;
+                                            retorno.estado.detalle = exportJson.exportJsonUpd(email).toJson();
+                                            retorno.item = new ArrayList<email>();
+                                            retorno.item.add(email);
+                                            retorno.estado.tipo = "OK";
+                                        }
+                                        else
+                                        {
+                                            retorno.estado.codigo = "0001";
+                                            retorno.estado.descripcion = "Error al insertar, favor verifique";
+                                            retorno.estado.tipo = "ER";
+                                        }
+                                        cursor.close();
+                                    }
+                                    else
+                                    {
+                                        retorno.estado.codigo = "0008";
+                                        retorno.estado.descripcion = "Email previamente ingresado, verifique";
+                                        retorno.estado.tipo = "ER";
+                                    }
+                                }
+                                else
+                                {
+                                    retorno.estado.codigo = "0004";
+                                    retorno.estado.descripcion = "Entrada no pertenece a usuario o no existe, verifique";
+                                    retorno.estado.tipo = "ER";
+                                }
+                            }
+                            else
+                            {
+                                // El metodo de la verificacion de la clase ya asigna el mensaje segun criterio de validacion
+                            }
+                            break;
+                case "R":
+
+                            DBCursor cursor = null;
+                            String filtro = "";
+                            if(!email.entrada.isEmpty() && !email.entrada.equals("?"))
+                            {
+                                searchQuery.put("_id",new ObjectId(email.entrada));
+                                searchQuery.put("usuario",servidor.usuario);
+                                
+                                tabletemp = db.getCollection("entrada");
+
+                                cursor = tabletemp.find(searchQuery);
+                                
+                                if(cursor.count() == 1)
+                                {
+                                    cursor.close();
+                                    
+                                    searchQuery = new BasicDBObject();
+                                    searchQuery.put("entrada",email.entrada);
+                                    filtro = "entrada";
+                                    
+                                    qry = true;
+                                    
+                                    if(!email.id.isEmpty() && !email.id.equals("?"))
+                                    {
+                                        searchQuery.put("_id",new ObjectId(email.id));
+                                        filtro = "id";
+                                        qry = true;
+                                    }
+                                    else
+                                    {
+                                        if(!email.email.isEmpty() && !email.email.equals("?"))
+                                        {
+                                            searchQuery.put("email",email.email);
+                                            filtro = "email";
+                                            qry = true;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    retorno.estado.codigo = "0004";
+                                    retorno.estado.descripcion = "Entrada no pertenece a usuario o no existe, verifique";
+                                    retorno.estado.tipo = "ER";
+                                }
+                            }
+                            else
+                            {
+                                retorno.estado.codigo = "0004";
+                                retorno.estado.descripcion = "Entrada no valida, verifique";
+                                retorno.estado.tipo = "ER";
+                            }
+                            if(qry)
+                            {
+                                cursor = null;
+
+                                System.out.println(filtro + "-" + searchQuery.toJson());
+                                
+                                cursor = table.find(searchQuery);
+
+                                if (cursor.count() > 0)
+                                {   
+                                    retorno.estado.codigo = "0000";
+                                    retorno.estado.descripcion = "Consulta satisfactoria: " + filtro;
+                                    retorno.estado.detalle = Integer.toString(cursor.count());
+                                    retorno.estado.tipo = "OK";
+                                    
+                                    retorno.item = new ArrayList<email>();
+                                    
+                                    while (cursor.hasNext()) 
+                                    {
+                                        retorno.item.add(importJson.importJsonEmail((BasicDBObject) cursor.next()));
+                                    }
+                                }
+                                else
+                                {
+                                    retorno.estado.codigo = "0005";
+                                    retorno.estado.descripcion = "No se encontraron documentos con el filtro solicitado {\"" + filtro + "\"}, verifique";
+                                    retorno.estado.detalle = exportJson.exportJson(email).toJson();
+                                    retorno.estado.tipo = "ER";
+                                }
+                                cursor.close();
+                            }
+                            
+                            break;
+                case "U":
+
+                            item = null;
+
+                            if(!email.entrada.isEmpty() && !email.entrada.equals("?"))
+                            {
+                               
+                                searchQuery.put("_id",new ObjectId(email.entrada));
+                                searchQuery.put("usuario",servidor.usuario);
+                                
+                                tabletemp = db.getCollection("entrada");
+
+                                cursor = tabletemp.find(searchQuery);
+                                
+                                if(cursor.count() == 1)
+                                {
+                                    cursor.close();
+                                
+                                    if(!email.id.isEmpty() && !email.id.equals("?"))
+                                    {
+                                        searchQuery = new BasicDBObject();
+                                        searchQuery.put("_id",new ObjectId(email.id));
+                                        searchQuery.put("entrada",email.entrada);
+
+                                        filtro = "id";
+
+                                        cursor = table.find(searchQuery);
+
+                                        if (cursor.count() ==  1)
+                                        {
+                                            qry = true;
+                                            while (cursor.hasNext()) 
+                                            {
+                                                item = importJson.importJsonEmail((BasicDBObject) cursor.next());
+                                            } 
+                                        }
+                                        cursor.close();
+                                    }
+                                }
+                                else
+                                {
+                                    retorno.estado.codigo = "0004";
+                                    retorno.estado.descripcion = "Entrada no pertenece a usuario o no existe, verifique";
+                                    retorno.estado.tipo = "ER";
+                                }
+                            }
+                            else
+                            {
+                                retorno.estado.codigo = "0004";
+                                retorno.estado.descripcion = "Entrada no valida, verifique";
+                                retorno.estado.tipo = "ER";
+                            }
+                            if (qry && item != null)
+                            {
+                                BasicDBObject updateObj = new BasicDBObject();
+                                updateObj.put("$set", exportJson.exportJsonUpd(email));
+                                
+                                System.out.println(searchQuery.toJson() + " - " + updateObj.toJson());
+                                
+                                table.update(searchQuery, updateObj);
+                                
+                                retorno.estado.codigo = "0000";
+                                retorno.estado.descripcion = "Actualizacion satisfactoria, Id: " + email.id  + ", entrada: " + email.entrada;
+                                retorno.estado.detalle = searchQuery.toJson() + " - " + updateObj.toJson();
+                                retorno.estado.tipo = "OK";
+                                
+                                retorno.item = new ArrayList<email>();
+                                retorno.item.add(item);
+                                retorno.item.add(email);
+                                
+                            }
+                            else
+                            {
+                                retorno.estado.codigo = "0006";
+                                retorno.estado.descripcion = "Atributo {\"_id\":\"" + email.id + "\"} no encontrado, verifique";
+                                retorno.estado.tipo = "ER";
+                            }
+     
+                            break;
+                case "D":
+                            item = null;
+
+                            if(!email.entrada.isEmpty() && !email.entrada.equals("?"))
+                            {
+                               
+                                searchQuery.put("_id",new ObjectId(email.entrada));
+                                searchQuery.put("usuario",servidor.usuario);
+                                
+                                tabletemp = db.getCollection("entrada");
+
+                                cursor = tabletemp.find(searchQuery);
+                                
+                                if(cursor.count() == 1)
+                                {
+                                    cursor.close();
+                                
+                                    if(!email.id.isEmpty() && !email.id.equals("?"))
+                                    {
+                                        searchQuery = new BasicDBObject();
+                                        searchQuery.put("_id",new ObjectId(email.id));
+                                        searchQuery.put("entrada",email.entrada);
+
+                                        filtro = "id";
+
+                                        cursor = table.find(searchQuery);
+
+                                        if (cursor.count() ==  1)
+                                        {
+                                            qry = true;
+                                            while (cursor.hasNext()) 
+                                            {
+                                                item = importJson.importJsonEmail((BasicDBObject) cursor.next());
+                                            } 
+                                        }
+                                        cursor.close();
+                                    }
+                                }
+                                else
+                                {
+                                    retorno.estado.codigo = "0004";
+                                    retorno.estado.descripcion = "Entrada no pertenece a usuario o no existe, verifique";
+                                    retorno.estado.tipo = "ER";
+                                }
+                            }
+                            else
+                            {
+                                retorno.estado.codigo = "0004";
+                                retorno.estado.descripcion = "Entrada no valida, verifique";
+                                retorno.estado.tipo = "ER";
+                            }
+                            if (qry && item != null)
+                            {                                
+                                table.remove(searchQuery);
+                                
+                                retorno.estado.codigo = "0000";
+                                retorno.estado.descripcion = "Eliminacion satisfactoria, Id: " + email.id  + ", entrada: " + email.entrada;
+                                retorno.estado.detalle = searchQuery.toJson();
+                                retorno.estado.tipo = "OK";
+                                
+                                retorno.item = new ArrayList<email>();
+                                retorno.item.add(item);
+                                retorno.item.add(email);
+                                
+                            }
+                            break;
+                default:
+                            retorno.estado.codigo = "DF01";
+                            retorno.estado.descripcion = "Opcion no valida";
+                            retorno.estado.tipo = "ER";
+                            break;
+            }
+            mongo.close();
+        }
+        catch(Exception ex)
+        {
+
+        }
+        return retorno;
+        
+    }
+    
 }
 
 
