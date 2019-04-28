@@ -207,6 +207,16 @@ public final class exportJson {
         return convierte;
     }
     
+    public static BasicDBObject exportJsonView(usuario Object)
+    {
+        BasicDBObject convierte = new BasicDBObject();
+        convierte.append("usuario",Object.usuario);
+        convierte.append("nombre", Object.nombre);
+        //convierte.append("password", Object.password);
+        
+        return convierte;
+    }
+    
     public static BasicDBObject exportJson(direccion Object)
     {
         BasicDBObject convierte = new BasicDBObject();
@@ -278,7 +288,6 @@ public final class exportJson {
         convierte.append("entrada",Object.entrada);
         convierte.append("fecha", Object.fecha);
         convierte.append("descripcion", Object.descripcion);
-        convierte.append("categoria", Object.categoria);
         convierte.append("tipo", Object.tipo);
         
         return convierte;
@@ -290,7 +299,6 @@ public final class exportJson {
         convierte.append("entrada",Object.entrada);
         convierte.append("fecha", Object.fecha);
         convierte.append("descripcion", Object.descripcion);
-        convierte.append("categoria", Object.categoria);
         convierte.append("tipo", Object.tipo);
         
         return convierte;

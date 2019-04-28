@@ -42,33 +42,33 @@ public class entrada {
         retorno.tipo = "OK";
         
         
-        if (this.identificador.isEmpty())
+        if (this.identificador.isEmpty() || this.identificador.equals("?"))
         {
             retorno.codigo = "V001";
             retorno.descripcion = "Identificacion no valida, verifique";
             retorno.tipo = "ER";
             return retorno;
         }
-        if (this.nombre.isEmpty())
+        if (this.nombre.isEmpty() || this.nombre.equals("?"))
         {
             retorno.codigo = "V002";
             retorno.descripcion = "Nombre no valido, verifique";
             retorno.tipo = "ER";
             return retorno;
         }
-        if (this.tipoPersona.isEmpty())
+        if (this.tipoPersona.isEmpty() || this.tipoPersona.equals("?"))
         {
             retorno.codigo = "V003";
             retorno.descripcion = "Tipo de persona no valida, verifique";
             retorno.tipo = "ER";
         }
-        if (this.tipoContacto.isEmpty())
+        if (this.tipoContacto.isEmpty() || this.tipoContacto.equals("?"))
         {
             retorno.codigo = "V004";
             retorno.descripcion = "Tipo de conctacto no valida, verifique";
             retorno.tipo = "ER";
         }
-        if (this.usuario.isEmpty())
+        if (this.usuario.isEmpty() || this.usuario.equals("?"))
         {
             retorno.codigo = "V005";
             retorno.descripcion = "Usuario no valido, verifique";

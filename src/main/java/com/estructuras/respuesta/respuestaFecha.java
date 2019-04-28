@@ -30,7 +30,7 @@ public class respuestaFecha {
         estado = new estado();
     }
     
-    public List<fecha> getListaTelefono() {
+    public List<fecha> getListaFecha() {
         if(this.item == null) {
             this.item = new ArrayList<fecha>();
         }

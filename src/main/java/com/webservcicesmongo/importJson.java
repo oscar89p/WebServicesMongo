@@ -112,6 +112,18 @@ public final class importJson {
         usuario retorno = new usuario();
         retorno.id = Json.getString("_id");
         retorno.nombre = Json.getString("nombre");
+        //retorno.password = Json.getString("password");
+        retorno.password = "*******";
+        retorno.usuario = Json.getString("usuario");
+        
+        return retorno;
+    }
+    
+    public static usuario importJsonUsuarioPass(BasicDBObject Json)
+    {
+        usuario retorno = new usuario();
+        retorno.id = Json.getString("_id");
+        retorno.nombre = Json.getString("nombre");
         retorno.password = Json.getString("password");
         retorno.usuario = Json.getString("usuario");
         
@@ -158,7 +170,6 @@ public final class importJson {
         retorno.entrada = Json.getString("entrada");
         retorno.fecha = Json.getString("fecha");
         retorno.descripcion = Json.getString("descripcion");
-        retorno.categoria = Json.getString("categoria");
         retorno.tipo = Json.getString("tipo");
 
         return retorno;

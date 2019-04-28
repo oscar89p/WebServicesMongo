@@ -18,7 +18,6 @@ public class fecha {
     public String entrada;
     public String fecha;
     public String descripcion;
-    public String categoria;
     public String tipo;
     
     public fecha()
@@ -27,7 +26,6 @@ public class fecha {
         this.entrada = "";
         this.fecha = "";
         this.descripcion = "";
-        this.categoria = "";
         this.tipo = "";
     }
     
@@ -39,41 +37,38 @@ public class fecha {
         retorno.tipo = "OK";
         
         
-        if (this.entrada.isEmpty())
+        if (this.entrada.isEmpty() || this.entrada.equals("?"))
         {
             retorno.codigo = "V001";
             retorno.descripcion = "Entrada no valida, verifique";
             retorno.tipo = "ER";
             return retorno;
         }
-        if (this.fecha.isEmpty())
+        
+        if (this.fecha.isEmpty() || this.fecha.equals("?"))
         {
             retorno.codigo = "V002";
-            retorno.descripcion = "Fecha no valido, verifique";
+            retorno.descripcion = "Fecha no valida, verifique";
             retorno.tipo = "ER";
             return retorno;
         }
-        if (this.descripcion.isEmpty())
+        
+        if (this.descripcion.isEmpty() || this.descripcion.equals("?"))
         {
             retorno.codigo = "V003";
             retorno.descripcion = "Descripcion no valida, verifique";
             retorno.tipo = "ER";
             return retorno;
         }
-        if (this.categoria.isEmpty())
+        
+        if (this.tipo.isEmpty() || this.tipo.equals("?"))
         {
             retorno.codigo = "V004";
-            retorno.descripcion = "Categoria no valida, verifique";
+            retorno.descripcion = "Tipo no valido, verifique";
             retorno.tipo = "ER";
             return retorno;
         }
-        if (this.tipo.isEmpty())
-        {
-            retorno.codigo = "V005";
-            retorno.descripcion = "Tipo no valida, verifique";
-            retorno.tipo = "ER";
-            return retorno;
-        }
+        
         return retorno;
     }
     

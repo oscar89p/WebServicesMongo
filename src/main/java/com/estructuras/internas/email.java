@@ -35,14 +35,14 @@ public class email {
         retorno.tipo = "OK";
         
         
-        if (this.entrada.isEmpty())
+        if (this.entrada.isEmpty() || this.entrada.equals("?"))
         {
             retorno.codigo = "V001";
             retorno.descripcion = "Entrada no valida, verifique";
             retorno.tipo = "ER";
             return retorno;
         }
-        if (this.email.isEmpty())
+        if (this.email.isEmpty() || this.email.equals("?"))
         {
             retorno.codigo = "V002";
             retorno.descripcion = "Direccion no valido, verifique";

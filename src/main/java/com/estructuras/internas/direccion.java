@@ -34,21 +34,21 @@ public class direccion {
         retorno.tipo = "OK";
         
         
-        if (this.entrada.isEmpty())
+        if (this.entrada.isEmpty() || this.entrada.equals("?"))
         {
             retorno.codigo = "V001";
             retorno.descripcion = "Entrada no valida, verifique";
             retorno.tipo = "ER";
             return retorno;
         }
-        if (this.direccion.isEmpty())
+        if (this.direccion.isEmpty() || this.direccion.equals("?"))
         {
             retorno.codigo = "V002";
             retorno.descripcion = "Direccion no valido, verifique";
             retorno.tipo = "ER";
             return retorno;
         }
-        if (this.tipo.isEmpty())
+        if (this.tipo.isEmpty() || this.tipo.equals("?")) 
         {
             retorno.codigo = "V003";
             retorno.descripcion = "Tipo de direccion no valida, verifique";
